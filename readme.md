@@ -17,7 +17,7 @@
 
 ### 代码
 
-```
+```js
 var MyStack = function() {
     this.stack =[]
 
@@ -57,7 +57,7 @@ MyStack.prototype.empty = function() {
 
 ### 代码
 
-```
+```js
 var reverseList = function(head) {
     if(!head||!head.next){
         return head
@@ -92,7 +92,7 @@ var reverseList = function(head) {
 
 ### 代码
 
-```
+```js
 //1.合并数组排序
 var merge = function(A, m, B, n) {
     A.splice(m, A.length,...B)
@@ -127,7 +127,7 @@ var merge = function(A, m, B, n) {
 
 ### 代码
 
-```
+```js
 var orangesRotting = function(grid) {
     let times = 0,
         cnt = 0, // fresh oranges counter🍊
@@ -187,7 +187,7 @@ var orangesRotting = function(grid) {
 
 ### 代码
 
-```
+```js
 //一、暴力法
 var distributeCandies = function(candies, num_people) {
     let res = new Array(num_people).fill(0)
@@ -213,5 +213,46 @@ var distributeCandies = function(candies, num_people) {
     }
     res[cols] += r //remaining 🍬
     return res
+}
+```
+
+# [每日一题ep06: continuous sequence🔲和s的连续正序列 (JavaScript/js)](https://leetcode-cn.com/problems/he-wei-sde-lian-xu-zheng-shu-xu-lie-lcof/solution/mei-ri-yi-ti-ep06-continuous-sequencehe-sde-lian-x/)
+
+### 解题思路
+
+**一、滑动窗口法**😆
+滑动窗口🔲(左开右闭区间，设左端点l,右端点r)
+滑动窗口最重要的性质:窗口的左边界和右边界只能向右移动(时间复杂度O(n))
+look at 👀 the detail code below👇
+
+**二、数学公式法**😵
+等差求和...
+
+### 代码
+
+```javascript
+var findContinuousSequence = function(target) {
+    let l = 1 //left edge of sliding window
+    let r = 1 //right edge of sliding window
+    let sum = 0 //store the sum of window
+    let res =[]
+    while(l<=Math.round(target/2)){
+        if(sum===target){ 
+            let temp = [] //temp arr to store
+            for(let i=l;i<r;i++){
+                temp.push(i)
+            }
+            res.push(temp)
+            sum -=l
+            l++               //l slide to right
+        }else if(sum>target){ //l slide to right
+            sum -= l
+            l++
+        }else if(sum<target){ // r slide to right
+            sum += r
+            r++
+        }
+   }
+    return res 
 }
 ```
