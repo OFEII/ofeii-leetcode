@@ -256,3 +256,45 @@ var findContinuousSequence = function(target) {
     return res 
 }
 ```
+
+# [每日一题ep07: MaxQueue🔢队列最大值 (JavaScript/js)](https://leetcode-cn.com/problems/dui-lie-de-zui-da-zhi-lcof/solution/mei-ri-yi-ti-ep07-maxqueuedui-lie-zui-da-zhi-javas/)
+
+### 解题思路
+
+**一、数组法**😊
+**定义**一个**队列**并实现**函数max_value** 得到**队列里的最大值**🔢
+**⚠**函数max_value、push_back 和 pop_front 的**时间复杂度都是O(1)**
+
+**pop_front的时间复杂度为何为O(1)？**--**均摊时间复杂度**
+
+- 假设数组长度为n
+- 只有当pop_front的值为maxVal最大值时才需Math.max 复杂度O(n)
+- 其余情况下为O(1)
+- 均摊下来 n*1+n/(n+1) = 2n/(n+1) -> 故为O(1)
+
+### 代码
+
+```js
+// 建立一个队列数组 maxVal用于存储最大值
+var MaxQueue = function() { 
+    this.queue = []
+    this.maxVal = -Infinity
+};
+// 数组不存在即队列为空返回-1 否则返回最大值maxVal
+MaxQueue.prototype.max_value = function() {
+    if(!this.queue.length) return -1
+    return this.maxVal
+};
+//入队push 比较入队的值与maxVal 大则更新maxVal
+MaxQueue.prototype.push_back = function(value) {
+    this.queue.push(value)
+    if(value>this.maxVal) this.maxVal = value
+};
+// 出队shift 返回数组第一个删除元素 如果删除数为最大值则需比较剩余数组中的最大值并更新
+MaxQueue.prototype.pop_front = function() {
+    if(!this.queue.length) return -1
+    let val = this.queue.shift()
+    if(val === this.maxVal) this.maxVal = Math.max(...this.queue)
+    return val
+};
+```
