@@ -298,3 +298,110 @@ MaxQueue.prototype.pop_front = function() {
     return val
 };
 ```
+
+# [每日一题ep08: coinChange💰队列最大值 (JavaScript/js)](https://leetcode-cn.com/problems/coin-change/solution/mei-ri-yi-ti-ep08-coinchangedui-lie-zui-da-zhi-jav/)
+
+### 解题思路
+
+一、动态规划法💰
+
+### 代码
+
+```js
+/**
+ * @param {number[]} coins
+ * @param {number} amount
+ * @return {number}
+ */
+var coinChange = function(coins, amount) {
+  let dp = new Array(amount+1).fill(Infinity)
+  dp[0] = 0
+  for (let coin of coins ) {
+    for (let i = 1; i <= amount; i++) {
+      if (i - coin >= 0) {
+        dp[i] = Math.min(dp[i], dp[i - coin] + 1)
+      }
+    }
+  }
+  return dp[amount] === Infinity ? -1 : dp[amount]
+}
+```
+
+#  [每日一题ep09: maxProfit📈股票最大利润💸 (JavaScript/js)](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/solution/mei-ri-yi-ti-ep08-maxprofitgu-piao-zui-da-li-run-j/)
+
+### 解题思路
+
+**方法一：暴力法**
+数组中两个数字的最大差值即为**最大利润maxprofit**
+比较差值求出**max(prices[j] - prices[i])** **(j > i)**
+**时间复杂度**:**O(n^2)**,循环运行n(n-1)/2次
+**空间复杂度**:**O(1)**,只使用了常数个变量
+
+**方法二：一次遍历法** 📈**低买高卖才能赚钱**💸 😎
+一个变量**minprice**存储 **历史最低价**
+一个变量**max**存储 **最大利润**
+第 i 天卖出股票能得到的利润就是 prices[i] - minprice
+最大利润为 **max(prices[i] - minprice)**
+**时间复杂度**:**O(n)**
+**空间复杂度**:**O(1)**
+
+**方法三：动态规划dp法**
+**core:**
+dp[i] = max(0, dp[i−1] + diff[i])
+max = max(max, dp[i])
+
+### 代码
+
+```js
+// 方法一：暴力法
+var maxProfit = function(prices) {
+    let max = 0
+    for(let i =0;i<prices.length-1;i++){
+        for (let j = i+1; j < prices.length; j++) {
+            let p = prices[j]-prices[i]
+            if(p > max) max = p
+        }
+    } 
+    return max
+};
+// 方法二：一次遍历法
+var maxProfit = function(prices) {
+    let minprice = Number.MAX_SAFE_INTEGER
+    let max = 0
+    for(let i = 0;i<prices.length;i++){
+        if(prices[i]<minprice){
+            minprice = prices[i]
+        }else{
+            max = Math.max(max,prices[i]-minprice)
+        }
+    }
+    return max
+}
+// 方法三：dp粗糙版
+var maxProfit = function(prices) {
+    if(prices.length<=1) return 0
+    let diff = []
+    for (let i = 0; i < prices.length-1; i++) {
+        diff[i] = prices[i+1] -prices[i]
+    }
+
+    let dp = new Array(prices.length).fill(0)
+    dp[0] = Math.max(0,diff[0])
+    let max = dp[0]
+    for (let i = 1; i < diff.length; i++) {
+        dp[i] = Math.max(0, dp[i-1]+diff[i])
+        max = Math.max(max,dp[i])
+    }
+    return max
+}
+// 方法三：dp优化版
+var maxProfit = function(prices) {
+    let last = 0
+    let max = 0
+    for (let i = 0; i < prices.length-1; i++) {
+        last = Math.max(0, last + prices[i+1]-prices[i])
+        max = Math.max(max,last)
+    }
+    return max
+}
+```
