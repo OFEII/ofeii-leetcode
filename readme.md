@@ -405,3 +405,34 @@ var maxProfit = function(prices) {
     return max
 }
 ```
+
+# [每日一题ep10: 🍴🍴🌳d of binarytree二叉树的直径 (JavaScript/js)](https://leetcode-cn.com/problems/diameter-of-binary-tree/solution/mei-ri-yi-ti-ep10-d-of-binarytreeer-cha-shu-de-zhi/)
+
+### 解题思路
+
+### 一、DFS 递归法
+
+经过一个node，其**左右子树的最大深度之和 + 1**（二叉树的根节点深度为0）
+定义一个**递归函数 depth(node)**
+计算 node 为起点的 **路径经过节点数 res**
+函数返回该节点为 **根的子树的深度**
+
+**时间复杂度：O(n)** n为**二叉树的节点** 遍历n
+**空间复杂度：O(Height)** 常数变量 递归的深度为**二叉树的高度**
+
+### 代码
+
+```js
+var diameterOfBinaryTree = function(root) {
+    let res = 0
+    depth(root)
+    return res
+    function depth (node) {
+        if (!node) return 0 // 节点不存在返回0
+        let left = depth(node.left) // left为左子树的深度
+        let right = depth(node.right)//right 为右子树的深度
+        res = Math.max(left + right, res) //计算l+r 更新res
+        return Math.max(left, right)+1 //返回该节点为根的子树的深度
+    }
+};
+```
