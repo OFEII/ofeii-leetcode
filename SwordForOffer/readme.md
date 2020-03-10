@@ -31,11 +31,54 @@ var reversePrint = function(head) {
 //while 如果head存在即链表存在，push进数组，右移head = head.next 直到next为null
 ```
 
+#### 面试题18-删除链表的节点
 
+```js
+var deleteNode = function(head, val) {
+    if(head.val === val){ //链表的头节点值为删除的val next跳过下一个
+        return head.next
+    }
+    head.next = deleteNode(head.next,val) // 右移遍历递归
+    return head
+};
+```
 
 #### 面试题22-链表中倒数第k个结点
 
+```js
+var getKthFromEnd = function(head, k) {
+    let fast = head
+    let low = head
+    while(fast){
+        fast = fast.next
+        if(k == 0){
+            low = low.next
+        }else{
+            k--
+        }
+    }
+    return low
+};
+// 因为要求链表倒数第 k 个节点，也就是求正数第 length - k个节点
+// 先让fast走k次，然后fast和low一起走
+// 当fast为null的时候，low就是所求的倒数第k个节点
+```
+
+
+
 #### 面试题24-反转链表
+
+```js
+var reverseList = function(head) {
+    if (!head || !head.next) return head
+    let newhead = reverseList(head.next)
+    head.next.next = head
+    head.next = null
+    return newhead
+};
+```
+
+
 
 #### 面试题25-合并两个排序的链表
 
@@ -43,7 +86,7 @@ var reversePrint = function(head) {
 
 #### 面试题52-两个链表的第一个公共节点
 
-#### 面试题18-删除链表的节点
+#### 
 
 
 
@@ -91,7 +134,27 @@ var buildTree = function(preorder, inorder) {
 
 #### 面试题26-树的子结构
 
+```js
+var isSubStructure = function(A, B) {
+    if(!A || !B){   //如果A或B其中为空返回false
+        return false
+    }
+    return back(A,B) || isSubStructure(A.left,B) || isSubStructure(A.right,B)
 
+    function back(A,B){
+        //back 函数出口条件：B首先要放在首位
+        if(!B)return true
+        if(!A)return false
+        if(A.val !== B.val){  //判断a的当前值是否和b相同
+            return false
+        }
+        return back(A.left,B.left) && back(A.right,B.right)
+    }
+};
+// 判断A或B是否为null
+// 判断AB根值是否相同，A的left判断、A的right判断
+// 只要有个符合就return true
+```
 
 #### 面试题27-二叉树的镜像
 
@@ -286,11 +349,23 @@ function bitSum(n) {
 
 
 
+### 字符串
+
+#### 面试题20. 表示数值的字符串
+
+```js
+var isNumber = function(s) {
+    return Number.parseFloat(s,10)==s?true:false
+};
+```
+
+
+
 ## **具体算法类题目**
 
 ### **斐波那契数列**
 
-#### 面试题10-1-斐波拉契数列
+#### 面试题10-1-斐波拉契数列(dp)
 
 ```js
 var fib = function(n) {
@@ -310,7 +385,7 @@ var fib = function(n) {
 
 
 
-#### 面试题10-2-青蛙跳台阶问题
+#### 面试题10-2-青蛙跳台阶问题(dp)
 
 ```js
 var numWays = function(n) {
@@ -330,7 +405,7 @@ var numWays = function(n) {
 
 ### **搜索算法**
 
-#### 面试题03 数组中重复的数字
+#### 面试题03 数组中重复的数字(set.has/add)
 
 ```js
 var findRepeatNumber = function (nums) {
@@ -349,7 +424,7 @@ var findRepeatNumber = function (nums) {
 //Set.clear()：清除所有成员，没有返回值
 ```
 
-#### 面试题04-二维数组中的查找
+#### 面试题04-二维数组中的查找（map includes）
 
 ```js
 var findNumberIn2DArray = function(matrix, target) {
@@ -399,11 +474,25 @@ var minArray = function(numbers) {
 
 ### 贪心
 
-#### 面试题14- I. 剪绳子
+#### 面试题14- II. 剪绳子
+
+```js
+var cuttingRope = function(n) {
+    if(n<=3) return n-1
+    let res =1 
+    while(n>4){
+        n-=3
+        res = (res*3)%(1e9+7)
+    }
+    return (n*res)%(1e9+7)
+};
+```
+
+
 
 ### **动态规划**
 
-#### 面试题14- I. 剪绳子
+#### 面试题14- I. 剪绳子（dp）
 
 ```js
 var cuttingRope = function(n) {
@@ -423,9 +512,20 @@ var cuttingRope = function(n) {
 // 空间复杂度是 O(N)，时间复杂度是 O(N^2)
 ```
 
-#### 面试题42-连续子数组的最大和
 
-#### 面试题19-正则表达式匹配(我用的暴力)
+
+#### 面试题19-正则表达式匹配(正则+模版``)
+
+```js
+var isMatch = function(s, p) {
+    let reg = new RegExp(`^`+p+`$`)
+    return reg.test(s)
+};
+```
+
+
+
+#### 面试题42-连续子数组的最大和
 
 
 
@@ -449,9 +549,25 @@ var cuttingRope = function(n) {
 
 ### **位运算**
 
-#### 面试题15-二进制中1的个数
+#### 面试题15-二进制中1的个数 BigInt + filter 
 
-#### 面试题16-数值的整数次方
+```js
+var hammingWeight = function(n) {
+    return BigInt(n).toString(2).split('').filter(e=>e=='1').length
+};
+```
+
+
+
+#### 面试题16-数值的整数次方(**)
+
+```js
+var myPow = function(x, n) {
+    return parseFloat(x**n)
+};
+```
+
+
 
 
 
@@ -467,9 +583,25 @@ var replaceSpace = function(s) {
 // reg正则表达式替换replace
 ```
 
+#### 面试题17. 打印从1到最大的n位数(...+keys)
 
+```js
+keys是对键名的遍历
+var printNumbers = function(n) {
+    let res =[...new Array(10**n).keys()].slice(1)
+    return res
+};
+```
 
-#### 面试题21-调整数组顺序使奇数位于偶数前面
+#### 面试题21-调整数组顺序使奇数位于偶数前面(...+filter)
+
+```js
+var exchange = function(nums) {
+    let odd = nums.filter(e=>e%2===1)
+    let even = nums.filter(e=>e%2===0)
+    return [...odd,...even]
+};
+```
 
 #### 面试题39-数组中出现次数超过一半的数字
 
