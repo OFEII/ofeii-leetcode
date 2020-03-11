@@ -436,3 +436,40 @@ var diameterOfBinaryTree = function(root) {
     }
 };
 ```
+
+# [每日一题ep11: 👌Array trisection数组三等分 (JavaScript/js)](https://leetcode-cn.com/problems/partition-array-into-three-parts-with-equal-sum/solution/mei-ri-yi-ti-ep11-array-trisectionshu-zu-san-deng-/)
+
+### 解题思路
+
+#### 一、遍历计数法
+
+- 数组三等分，每部分和为sum/3
+
+- 从左到右遍历**累加**，若为sum/3，cnt**计数**加1，temp**置0**
+
+- 最后
+
+  判断
+
+  return true的情况
+
+  1. **sum不为0**且 **cnt==3** 时 return true
+  2. **sum为0**且 **cnt>2** 时 return true **(🌰[0,0,0,0])**
+
+#### 二、双指针法
+
+```js
+var canThreePartsEqualSum = function(A) {
+    let sum = A.reduce((acc,cur)=>acc+cur) //sum数组之和
+    let temp = 0   //temp累加
+    let cnt = 0   //cnt计数
+    for(let i=0;i<A.length;i++){
+        temp += A[i] 
+        if(temp == sum/3){  
+            cnt++   
+            temp = 0
+        }
+    }
+    return (sum!=0 && cnt==3)||(sum==0 && cnt>2)
+};
+```
