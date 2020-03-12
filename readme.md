@@ -473,3 +473,34 @@ var canThreePartsEqualSum = function(A) {
     return (sum!=0 && cnt==3)||(sum==0 && cnt>2)
 };
 ```
+
+#  [每日一题ep12: 🧐gcd of s1s2 字符串最大公因子 (JavaScript/js)](https://leetcode-cn.com/problems/greatest-common-divisor-of-strings/solution/mei-ri-yi-ti-ep12-gcd-of-s1s2-zi-fu-chuan-zui-da-g/)
+
+### 解题思路
+
+### 一、数学法(gcd)
+
+#### 基础知识-gcd定理🧐
+
+- 最大公约数（**Greatest Common Divisor**）缩写为**GCD**
+- **gcd定理**：两个整数的最大公约数等于其中较小的那个数和两数相除余数的最大公约数
+- **gcd算法**：gcd(a,b) = gcd(b,a mod b) (不妨设a>b 且r=a mod b ,r不为0)
+
+#### code process📃
+
+1. 假设s1,s2有公因子abc,🌰 abcabc + abc == abc + abcabc(s1 == s2,存在最大公因子)反之不存在即s1 != s2,返回 ' '
+2. 两个字符串的最大公因子的length为两个字符串的length取最大公约数
+3. substring截取
+
+### 代码
+
+```js
+//一、数学法(gcd)
+var gcdOfStrings = function(str1, str2) {
+    if (str1 + str2 !== str2 + str1) return ''
+    let len = gcd(str1.length, str2.length)
+    return str1.substring(0, len)
+};
+
+let gcd = (a, b) => (b === 0 ? a : gcd(b, a % b))
+```
