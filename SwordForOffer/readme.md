@@ -158,6 +158,20 @@ var isSubStructure = function(A, B) {
 
 #### 面试题27-二叉树的镜像
 
+```js
+var mirrorTree = function(root) {
+    // 判断根节点
+    if(root == null) return root;
+    // 交换左右子树
+    [root.left, root.right] = [root.right, root.left];
+    // 递归交换左右子树
+    mirrorTree(root.left);
+    mirrorTree(root.right);
+    return roo
+```
+
+
+
 #### 面试题32-1 -从上往下打印二叉树
 
 #### 面试题32-2 -从上往下打印二叉树 2
