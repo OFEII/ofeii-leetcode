@@ -1,3 +1,5 @@
+
+
 #### 
 
 ## **数据结构类题目**
@@ -83,6 +85,31 @@ var reverseList = function(head) {
 #### 面试题25-合并两个排序的链表
 
 #### 面试题35-复杂链表的复制
+
+```js
+var copyRandomList = function(head) {
+      const mapping = new Map();
+
+  // 递归函数
+  // 有点Top-down DP那味儿！（其实就是）
+  function copy(node) {
+    if (!node) return node; // 空结点
+    if (mapping.has(node)) return mapping.get(node); // 取缓存
+
+    const res = new Node();
+    mapping.set(node, res); // 先放缓存
+    res.val = node.val;
+    res.next = copy(node.next); // 结点，要递归
+    res.random = copy(node.random); // 结点，要递归
+    return res;
+  }
+
+  return copy(head);
+
+};
+```
+
+
 
 #### 面试题52-两个链表的第一个公共节点
 
@@ -170,27 +197,252 @@ var mirrorTree = function(root) {
     return roo
 ```
 
+#### 面试题28-对称的二叉树
+
+```js
+var isSymmetric = function(root) {
+    if (!root) return true
+    return sym(root.left, root.right)
+};
+
+function sym(t1, t2) {
+    if (!t1 && !t2) return true
+    if (!t1 || !t2) return false
+    return (
+        t1.val === t2.val &&   //左右子树值相等 递归判断各左右子树的左-右 或是 右-左
+        sym(t1.left, t2.right) &&
+        sym(t1.right, t2.left)
+    )
+}
+```
+
 
 
 #### 面试题32-1 -从上往下打印二叉树
 
+```js
+var levelOrder = function(root) {
+    if (!root) return []
+    const res = []
+    const queue = [root]
+    while (queue.length) {
+        const first = queue.shift() //返回第一个删除的元素
+        res.push(first.val) //移入数组中
+        first.left && queue.push(first.left) // 第一个左边存在push进queue里面
+        first.right && queue.push(first.right)// 第一个右边存在push进queue里面
+    }
+    return res
+};
+```
+
 #### 面试题32-2 -从上往下打印二叉树 2
+
+```js
+var levelOrder = function(root) {
+    if (!root) return []
+    const queue = [root]
+    const res = [] // 存放遍历结果
+    let level = 0 // 代表当前层数
+    while (queue.length) {
+        res[level] = [] // 第level层的遍历结果
+        let levelNum = queue.length // 第level层的节点数量
+        while (levelNum--) {
+            const front = queue.shift()
+            res[level].push(front.val)
+            if (front.left) queue.push(front.left)
+            if (front.right) queue.push(front.right)
+        }
+
+        level++
+    }
+    return res
+};
+```
+
+
 
 #### 面试题32-3 -从上往下打印二叉树 3
 
+```js
+var levelOrder = function(root) {
+    if (!root) return [];
+    const queue = [root];
+    const res = [];
+    let level = 0; // 代表当前层数
+    while (queue.length) {
+        res[level] = []; // 第level层的遍历结果
+
+        let levelNum = queue.length; // 第level层的节点数量
+        while (levelNum--) {
+            const front = queue.shift();
+            res[level].push(front.val);
+            if (front.left) queue.push(front.left);
+            if (front.right) queue.push(front.right);
+        }
+        // 行号是偶数时，翻转当前层的遍历结果
+        if (level % 2) {
+            res[level].reverse();
+        }
+
+        level++;
+    }
+    return res;
+};
+```
+
+
+
 #### 面试题33-二叉搜索树的后序遍历序列
+
+```js
+function verifyPostorder(sequence) {
+    const length = sequence.length;
+    if (length < 2) return true;
+
+    const root = sequence[length - 1];
+    // sequence[0, root) 是左子树；sequence[root, length - 1)是右子树
+    let cut = 0; // 左子树节点的数量
+    for (; cut < length - 1 && sequence[cut] < root; ++cut) {}
+    // 这里要检查右子树中的值是否满足条件
+    for (let i = cut; i < length - 1; ++i) {
+        if (sequence[i] < root) {
+            return false;
+        }
+    }
+
+    return (
+        verifyPostorder(sequence.slice(0, cut)) &&
+        verifyPostorder(sequence.slice(cut, length - cut - 1))
+    );
+}
+```
+
+
 
 #### 面试题34-二叉树中和为某一值的路径
 
+```js
+var pathSum = function(root, sum) {
+    if (!root) {
+        return [];
+    }
+    const pathes = [];
+    __pathSum(root, sum, pathes, []);
+    return pathes;
+};
+
+function __pathSum(root, sum, pathes, path) {
+    if (!root) {
+        return;
+    }
+
+    path = [...path, root.val]; // 深拷贝
+
+    if (!root.left && !root.right && root.val === sum) {
+        pathes.push(path);
+        return;
+    }
+
+    __pathSum(root.left, sum - root.val, pathes, path);
+    __pathSum(root.right, sum - root.val, pathes, path);
+}
+```
+
+
+
 #### 面试题36-二叉搜索树与双向链表
+
+```js
+var treeToDoublyList = function(root) {
+    if (!root) {
+        return;
+    }
+    let head = null;
+    let pre = head;
+    inorder(root);
+    // 完成中序遍历后，pre指向了最后一个节点
+    // 将其闭合成环状结构
+    head.left = pre;
+    pre.right = head;
+    return head;
+
+    /**
+     * @param {Node} node
+     */
+    function inorder(node) {
+        if (!node) return;
+        // 遍历左子树
+        inorder(node.left, pre);
+
+        // 处理当前节点
+        if (!pre) {
+            // 遍历到最左边节点，此时节点就是双向链表的head
+            head = node;
+        } else {
+            pre.right = node;
+        }
+        node.left = pre;
+        pre = node;
+
+        // 遍历右子树
+        inorder(node.right, pre);
+    }
+};
+```
+
+
+
+#### 面试题37-序列化二叉树
+
+```js
+var treeToDoublyList = function(root) {
+    if (!root) {
+        return;
+    }
+    let head = null;
+    let pre = head;
+    inorder(root);
+    // 完成中序遍历后，pre指向了最后一个节点
+    // 将其闭合成环状结构
+    head.left = pre;
+    pre.right = head;
+    return head;
+
+    /**
+     * @param {Node} node
+     */
+    function inorder(node) {
+        if (!node) return;
+        // 遍历左子树
+        inorder(node.left, pre);
+
+        // 处理当前节点
+        if (!pre) {
+            // 遍历到最左边节点，此时节点就是双向链表的head
+            head = node;
+        } else {
+            pre.right = node;
+        }
+        node.left = pre;
+        pre = node;
+
+        // 遍历右子树
+        inorder(node.right, pre);
+    }
+};
+```
+
+
 
 #### 面试题55-1-二叉树的深度
 
+
+
 #### 面试题55-2-平衡二叉树
 
-#### 面试题28-对称的二叉树
 
-#### 面试题37-序列化二叉树
+
+#### 
 
 #### 面试题54-[二叉搜索树的第k大节点](https://leetcode-cn.com/problems/er-cha-sou-suo-shu-de-di-kda-jie-dian-lcof)
 
@@ -226,7 +478,75 @@ CQueue.prototype.deleteHead = function() {
 
 #### 面试题30-[包含min函数的栈](https://leetcode-cn.com/problems/bao-han-minhan-shu-de-zhan-lcof)
 
+```js
+var MinStack = function() {
+    this.dataStack = [];
+    this.minStack = []; // 辅助栈
+};
+
+MinStack.prototype.push = function(x) {
+    this.dataStack.push(x);
+
+    const length = this.minStack.length;
+    if (!length) {
+        this.minStack.push(x);
+    } else if (x <= this.minStack[length - 1]) {
+        this.minStack.push(x);
+    }
+};
+
+MinStack.prototype.pop = function() {
+    const { minStack, dataStack } = this;
+    if (minStack[minStack.length - 1] === dataStack[dataStack.length - 1]) {
+        minStack.pop();
+    }
+
+    dataStack.pop();
+};
+
+
+MinStack.prototype.top = function() {
+    const length = this.dataStack.length;
+    if (length) {
+        return this.dataStack[length - 1];
+    } else {
+        return null;
+    }
+};
+
+
+MinStack.prototype.min = function() {
+    const length = this.minStack.length;
+    if (!length) return null;
+    return this.minStack[length - 1];
+};
+
+```
+
 #### 面试题31-栈的压入、弹出序列
+
+```js
+var validateStackSequences = function (pushed, popped) {
+  if (pushed.length == 0 && popped.length == 0) {
+    return true
+  }
+  if (pushed.length == 0 || popped.length == 0 || pushed.length != popped.length) {
+    return false
+  }
+  let stack = [] //辅助栈
+  let j = 0
+  for (let i = 0; i < pushed.length; i++) {
+    stack.push(pushed[i])
+    while(stack.length !== 0  && j<popped.length && stack[stack.length-1] === popped[j] ){
+      j++
+      stack.pop()
+    }
+  }
+  return stack.length === 0
+};
+```
+
+
 
 #### 面试题58-1-翻转单词顺序
 
@@ -237,6 +557,12 @@ CQueue.prototype.deleteHead = function() {
 ### **Heap**
 
 #### 面试题40-最小的K个数
+
+```js
+var getLeastNumbers = function(arr, k) {
+    return arr.sort((a, b) => a - b).slice(0, k);
+};
+```
 
 
 
@@ -476,6 +802,50 @@ var minArray = function(numbers) {
 // 最后返回旋转点即n[l]==n[r]
 ```
 
+#### 面试题41. 数据流中的中位数(二分查找)
+
+```js
+var MedianFinder = function() {
+    this.data = [];
+};
+
+MedianFinder.prototype.addNum = function(num) {
+    if (!this.data.length) {
+        this.data.push(num);
+        return;
+    }
+
+    let left = 0,
+        right = this.data.length - 1;
+    while (left <= right) {
+        let mid = Math.floor((left + right) / 2);
+        if (this.data[mid] === num) {
+            this.data.splice(mid, 0, num);
+            return;
+        } else if (this.data[mid] < num) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    this.data.splice(right + 1, 0, num);
+};
+
+MedianFinder.prototype.findMedian = function() {
+    const length = this.data.length;
+    if (!length) {
+        return null;
+    }
+
+    const mid = Math.floor((length - 1) / 2);
+    if (length % 2) {
+        return this.data[mid];
+    }
+    return (this.data[mid] + this.data[mid + 1]) / 2;
+};
+
+```
+
 
 
 #### 面试题56-1-数组中数字出现的次数（二分查找）
@@ -485,6 +855,42 @@ var minArray = function(numbers) {
 ### **全排列**
 
 #### 面试题38-字符串的排列
+
+```js
+
+var permutation = function (s) {
+    // dfs问题，先排序
+    let str = [];//深度遍历每次撞南墙的结果
+    let res = [];//最终的结果
+    let arr = s.split('');//转换成数组
+    let flag = [];//标记是否用过
+    let len = arr.length;
+    //先不管重复的，遍历所有的可能
+    let dfs = (u) => {
+        if (u === len) {//说明遍历到头
+            res.push(str.join(''));
+            return;//跳出循环，回溯
+        }
+
+        //枚举字符串，看下个位置可能的值
+        for (let i = 0; i < len; i++) {
+            if (!flag[i]) {//没被用过
+                str[u] = arr[i];
+                flag[i] = 1//标记那个位置，表示用过了
+                // 向下一层遍历
+                dfs(u + 1);
+                //回复现场
+                flag[i] = 0;
+            }
+        }
+    }
+
+    dfs(0);//从0的位置开始
+    return [...new Set(res)];//去重
+};
+```
+
+
 
 ### 贪心
 
@@ -617,7 +1023,90 @@ var exchange = function(nums) {
 };
 ```
 
+#### 面试题29. 顺时针打印矩阵
+
+```js
+var spiralOrder = function(matrix) {
+    if(matrix.length <= 0 || matrix[0].length <= 0){
+        return []
+    }
+    let xlen = matrix.length;
+    let ylen = matrix[0].length;
+    let result = [];
+    let all = xlen * ylen;
+    function goRight(now){
+        for(let j = now; j <= ylen - 1 - now; j++){
+            if(result.length == all){
+                return;
+            }
+            result.push(matrix[now][j]);
+        }
+    }
+    function goDown(now){
+        for(let j = now+1; j < xlen - 1 - now; j++){
+            if(result.length == all){
+                return;
+            }
+            result.push(matrix[j][ylen-1-now])
+        }
+    }
+    function goLeft(now){
+        for(let j = ylen-1-now; j > now; j--){
+            if(result.length == all){
+                return;
+            }
+            result.push(matrix[xlen - 1 - now][j])
+        }
+    }
+    function goUp(now){
+        for(let j = xlen - 1 - now; j > now; j--){
+            if(result.length == all){
+                return;
+            }
+            result.push(matrix[j][now])
+        }
+    }
+    let now = 0;
+    while(result.length < all){
+        goRight(now);
+        goDown(now);
+        goLeft(now);
+        goUp(now);
+        now++;
+    }
+    return result;
+};
+```
+
+
+
 #### 面试题39-数组中出现次数超过一半的数字
+
+```js
+var majorityElement = function(nums) {
+    const map = new Map();
+    const length = nums.length;
+
+    nums.forEach(num => {
+        const times = map.get(num);
+        if (times === undefined) {
+            map.set(num, 1);
+        } else {
+            map.set(num, times + 1);
+        }
+    });
+
+    for (const key of map.keys()) {
+        if (map.get(key) > length / 2) {
+            return key;
+        }
+    }
+
+    return 0;
+};
+```
+
+
 
 #### 面试题43- 1～n整数中1出现的次数
 
