@@ -12,4 +12,4 @@ var compressString = function(S) {
     res += S[i] + (j - i + 1)
     return res.length < S.length ? res : S
 };
-双指针模拟，使用两个下标 i 和 j，枚举头指针i，移动尾指针j
+// 双指针模拟，使用两个下标 i 和 j，枚举头指针i，移动尾指针j
